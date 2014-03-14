@@ -7,7 +7,7 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     public function testCanBeNegated()
     {
         // Arrange
-        $a = new Money(1);
+        $a = new Money1(1);
 
         // Act
         $b = $a->negate();
