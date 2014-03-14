@@ -10,13 +10,7 @@
 	<target name="build" depends="init, test, phpcs, phpmd, phpcpd, pdepend">
 	</target>
 
-	<target name="test">
-		<exec executable="phpunit" failonerror="true">
-			<arg line="--coverage-clover ${output}/CodeCoverage/clover.xml
-				--coverage-html ${output}/CodeCoverage/
-				."/>
-		</exec>
-	</target>
+
 
 	<target name="phpcs">
 		<exec executable="phpcs">
