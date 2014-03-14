@@ -116,7 +116,9 @@
   <exec executable="phpdox"/>
  </target>
 
- <target name="phpunit" description="Run unit tests with PHPUnit">
-  <exec executable="phpunit" failonerror="true"/>
+<target name="phpunit" description="Run unit tests with PHPUnit">
+  <exec executable="phpunit" failonerror="true">
+     <arg line="--log-junit ${basedir}/build/logs/phpunit.xml serving" />
+  </exec>
  </target>
 </project>
