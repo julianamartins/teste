@@ -1,4 +1,4 @@
-class Money
+<? class Money
 {
     private $amount;
 
@@ -19,3 +19,5 @@ class Money
 
     // ...
 }
+
+?>

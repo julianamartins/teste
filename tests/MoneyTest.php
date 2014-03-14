@@ -1,4 +1,4 @@
-class MoneyTest extends PHPUnit_Framework_TestCase
+<?php class MoneyTest extends PHPUnit_Framework_TestCase
 {
     // ...
 
@@ -16,3 +16,5 @@ class MoneyTest extends PHPUnit_Framework_TestCase
 
     // ...
 }
+
+?>
