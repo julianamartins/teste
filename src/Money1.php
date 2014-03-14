@@ -1,4 +1,5 @@
-<?php class Money
+<?php 
+class Money1
 {
     private $amount;
 

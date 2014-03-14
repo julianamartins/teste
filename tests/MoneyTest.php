@@ -1,5 +1,29 @@
 <?php
-require("../src/Money1.php");
+
+class Money
+{
+    private $amount;
+
+    public function __construct($amount)
+    {
+        $this->amount = $amount;
+    }
+
+    public function getAmount()
+    {
+        return $this->amount;
+    }
+
+    public function negate()
+    {
+        return new Money(-1 * $this->amount);
+    }
+
+    // ...
+}
+
+
+
 class MoneyTest extends PHPUnit_Framework_TestCase
 {
     // ...
@@ -7,7 +31,7 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     public function testCanBeNegated()
     {
         // Arrange
-        $a = new Money1(1);
+        $a = new Money(1);
 
         // Act
         $b = $a->negate();
