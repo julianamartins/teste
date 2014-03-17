@@ -1,6 +1,7 @@
 <?php 
 class Money
 {
+    require_once('../src/Money.php');
     private $amount;
 
     public function __construct($amount)
