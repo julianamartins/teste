@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit>
-  <testsuites>
-    <testsuite name="Test">
-      <directory>Tests</directory>
-    </testsuite>
-  </testsuites>
+<phpunit backupGlobals="false">
+  <filter>
+    <whitelist processUncoveredFilesFromWhitelist="true">
+      <directory suffix=".php">src</directory>
+      <file>src</file>
+    </whitelist>
+  </filter>
+
+    <testsuites>
+        <testsuite name="Test">
+            <directory>.</directory>
+        </testsuite>
+    </testsuites>
 </phpunit>
