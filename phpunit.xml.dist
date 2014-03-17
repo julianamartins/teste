@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit backupGlobals="false">
-    <testsuites>
-        <testsuite name="Test">
-            <directory>.</directory>
-        </testsuite>
-    </testsuites>
+<phpunit codecoverage="true" haltonfailure="true" haltonerror="true">
+  <formatter type="clover" usefile="false"/>
+  <batchtest>
+    <fileset dir="tests">
+      <include name="**/*Test*.php"/>
+    </fileset>
+  </batchtest>
 </phpunit>
