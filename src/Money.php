@@ -1,5 +1,5 @@
 <?php 
-class Money1
+class Money
 {
     private $amount;
 
@@ -20,5 +20,4 @@ class Money1
 
     // ...
 }
-
 ?>
