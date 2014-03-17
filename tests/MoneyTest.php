@@ -1,8 +1,7 @@
 <?php
 class MoneyTest extends PHPUnit_Framework_TestCase
 {
-    // ...
-
+    require_once('../src/Money.php');
     public function testCanBeNegated()
     {
         // Arrange
