@@ -10,7 +10,7 @@
   </logging>
     <testsuites>
         <testsuite name="Test">
-            <directory>.</directory>
+            <directory>/tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>
