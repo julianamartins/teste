@@ -4,7 +4,7 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     
     public function testCanBeNegated()
     {
-        require_once('src/Money.php');
+        //require_once('src/Money.php');
         // Arrange
         $a = new Money(1);
 
