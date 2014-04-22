@@ -36,32 +36,7 @@ casper.start( './demo/coffeemachine.html' );
 casper.viewport(1024, 768);
 
 casper.then(function(){
-	phantomcss.screenshot('#coffee-machine-wrapper', 'sesuite-1');
-});
-
-casper.then(function(){
-	casper.click('#coffee-machine-button');
-	
-
-});
-
-casper.then(function(){
-	casper.click('#cappuccino-button');
-	phantomcss.screenshot('#myModal', 'cappuccino success');
-});
-
-casper.then(function(){
-	casper.click('#close');
-
-	// wait for modal to fade-out
-	casper.waitForSelector('#myModal[style*="display: none"]',
-		function success(){
-			phantomcss.screenshot('#coffee-machine-wrapper', 'coffee machine close success');
-		},
-		function timeout(){
-			casper.test.fail('Should be able to walk away from the coffee machine');
-		}
-	);
+	phantomcss.screenshot('body', 'sesuite-1');
 });
 
 casper.then( function now_check_the_screenshots(){
