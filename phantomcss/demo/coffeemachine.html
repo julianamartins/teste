@@ -20,7 +20,7 @@
 	<body>
 
 	<div id="coffee-machine-wrapper">
-		<p>Would1 you like a coffee?</p>
+		<p>Would you like e?</p>
 
 		<a href="#myModal" role="button" class="btn btn-primary btn-large" id="coffee-machine-button" data-toggle="modal">Go to the Coffee Machine</a>
 
@@ -32,6 +32,14 @@
 			</div>
 			<div class="modal-body">
 				<p class="text-center"><i class="icon-coffee mug"></i></p>
+
+				<div class="text-center alert alert-success fade in" id="latte-success" style="display: none;">
+					Here is your <strong>Latte!</strong>. Hmm, tasty!
+		        </div>
+
+		        <div class="text-center alert alert-success fade in" id="cappuccino-success" style="display: none;">
+					A frothy <strong>Cappuccino!</strong> luverly!
+		        </div>
 
 		        <div class="text-center alert fade in" id="espresso-option" style="display: none;">
 					<p><strong>Espresso!</strong> Wanna make that a double?</p>
@@ -51,8 +59,8 @@
 					<p class="text-center">What would you like?</p>
 
 					<p class="text-center">
-						<button class="" id="cappuccino-button" type="button">Cappuccino</button>
-						<button class="" id="espresso-button" type="button">Espresso</button>
+						<button class="btn btn-large btn-primary" id="cappuccino-button" type="button">Cappuccino</button>
+						<button class="btn btn-large btn-primary" id="espresso-button" type="button">Espresso</button>
 					</p>
 				</div>
 

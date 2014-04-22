@@ -30,10 +30,6 @@ casper.start('http://sesuite20.softexpert.com/softexpert/login', function() {
 		'input[id="password"]':    'n1k1@2012'
     }, true);
 
-	htmlBase = document.createElement('html');
-   	html = fs.read('tmpl/base.html');
-   	htmlBase.innerHTML = html;
-
    	this.click('button[class="btn btn-cancel loginbtn"]');
 
 });
@@ -52,6 +48,9 @@ casper.then(function(){
 			this.click('a[class="'+cmps[x]+'"]');
 			this.then(function(){
 				var links = getPageLinks();
+				htmlBase = document.createElement('html');
+   				html = fs.read('tmpl/base.html');
+   				htmlBase.innerHTML = html;
 				var table = htmlBase.querySelector(".tableContainer");
 				var i = -1;
 				var countTr = 0;
@@ -75,8 +74,8 @@ casper.then(function(){
 						this.page.switchToFrame("iframe");
 						this.waitWhileVisible('iframe', function () {
 							var time = (new Date().getTime() - timeIni) / 1000;
-							this.capture('screenshots/'+cmps[x]+'-'+i+'.png');   
-							tableContent(i,pgtitle,time,cmps[x]+'-'+i);			
+							this.capture('screenshots/'+cmps[x-1]+'-'+i+'.png');   
+							tableContent(i,pgtitle,time,cmps[x-1]+'-'+i);			
 							tr.appendChild(htmlContent);
 					      }, function () {
 					      }, 55000);
@@ -85,11 +84,11 @@ casper.then(function(){
 						casper.page.switchToMainFrame();
 						if(i < (links.length-1)){
 							if(!this.exists('a[data-oid="'+links[i+1]+'"]'))
-					    		this.click('a[class="'+cmps[x]+'"]');
+					    		this.click('a[class="'+cmps[x-1]+'"]');
 						}
 					    else{
 					    	table.appendChild(tr);
-					    	fs.write('pages/'+cmps[x]+'.html', "'"+htmlBase.innerHTML+"'");
+					    	fs.write('pages/'+cmps[x-1]+'.html', "'"+htmlBase.innerHTML+"'","w");
 					    }
 					});
 					i++;

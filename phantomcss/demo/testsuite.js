@@ -36,7 +36,7 @@ casper.start( './demo/coffeemachine.html' );
 casper.viewport(1024, 768);
 
 casper.then(function(){
-	phantomcss.screenshot('#coffee-machine-wrapper', 'open coffee machine button');
+	phantomcss.screenshot('#coffee-machine-wrapper', 'sesuite-1');
 });
 
 casper.then(function(){
