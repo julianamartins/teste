@@ -23,11 +23,11 @@ var fs = require('fs');
 var htmlBase = "";
 var htmlContent = "";
 
-casper.start('http://192.168.1.103:82/softexpert/', function() {
+casper.start('http://sesuite20.softexpert.com/softexpert/login', function() {
 
 	this.fillSelectors('form.login-form', {
-		'input[id="user"]':    'juliana',
-		'input[id="password"]':    '1'
+		'input[id="user"]':    'juliana.martins',
+		'input[id="password"]':    'n1k1@2012'
     }, true);
 
    	this.click('button[class="btn btn-cancel loginbtn"]');
