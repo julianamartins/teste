@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Bootstrap -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+    .tableContainer{
+        width: 100%;
+        margin-top: 100px;
+    }
+    .tableContainer tr{
+        border-bottom: 1px solid #eee;
+    }
+    .tableContainer td{
+        width:50%;
+    }
+    .content{
+        margin-top: 30px;
+    }
+    .modalContent{
+        cursor:pointer;width:55%;float:left;margin-bottom: 10px;
+    }
+    .detailContent{
+        float:left;width:45%;padding-left:2%;margin-top: 50px;
+    }
+    .detailContent span{
+        padding-left: 15px;
+    }
+    .detailContent #Brequest{
+        color:red;
+    }
+    .panel-se{
+        width: 90%;
+    }
+
+    </style>
+
+  </head>
+<body>
+
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">SE Suite 2.0</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Componentes <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+              </ul>
+            </li>
+          </ul>
+
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <div class="container">
+        <table class="tableContainer">
+            <tr>
+                <td>
+                    <h4>TITULO</h4>
+
+                    <div class="content">
+                        <a data-toggle="modal" class="modalContent" data-target="#myModal">
+                            <img src="../sesuite1.png" width="100%"/>
+                        </a>
+
+                        <div class="detailContent">
+                            <p>
+                                <span id="time">
+                                    <b>Tempo:</b> 1000 
+                                </span>
+                            </p>
+                            <p>
+                                <span>
+                                    <b id="Brequest">Maior Request:</b> 1000 
+                                </span>
+                            </p>
+                        </div>
+                        <div class="panel-group" id="accordion">
+                            <div class="panel panel-default panel-se">
+                                <div class="panel-heading">
+                                    <span>
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                            <b>Requests (150)</b>
+                                        </a>
+                                    </span>
+                                </div>
+                                <div id="collapseOne" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <table class="table table-striped">
+                                            <tr>
+                                                <th  style="width: 20%;">Tempo</th>
+                                                <th>Request</th>
+                                            </tr>
+                                            <tr>
+                                                <td>oi</td>
+                                                <td>oi</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" style="width:90%">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <img src="sesuite1.png" width="100%"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+</body>
+</html>
