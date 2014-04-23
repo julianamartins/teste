@@ -17,7 +17,6 @@ var utils = require("utils");
 var timesRequest = [];
 var timeIni = "";
 var x = require('casper').selectXPath;
-var links = [];
 var fs = require('fs');
 var htmlBase = "";
 var htmlContent = "";
@@ -43,7 +42,7 @@ casper.then(function(){
 	}, function then() {
 		var cmps = getCmps();
 		var x=1;
-		this.repeat(cmps.length, function() {
+		this.repeat(cmps.length, function() {debugger;
 			this.click('a[class="'+cmps[x]+'"]');
 			this.then(function(){
 				var links = getPageLinks();
@@ -83,7 +82,6 @@ casper.then(function(){
 						});
 					});
 					this.then(function(){
-						casper.page.switchToMainFrame();
 						if(i < (links.length-1)){
 							if(!this.exists('a[data-oid="'+links[i+1]+'"]'))
 					    		this.click('a[class="'+cmps[x-1]+'"]');
@@ -138,7 +136,7 @@ function getPageLinks(){
 		var query = document.querySelectorAll(".section-container > .screen-list > li > [data-oid]");
         var links = [];
         for( var i = 0; i < query.length; i++ ) {
-			if(query[i].getAttribute('data-oid') != "undefined")
+			if(query[i].getAttribute('data-oid') != "undefined" && links.indexOf(query[i].getAttribute('data-oid')) == -1)
 	            links.push(query[i].getAttribute('data-oid'));
 	    }
         return links;
