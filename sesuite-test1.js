@@ -1,4 +1,3 @@
-
 var casper = require('casper').create({
     verbose: true,
     logLevel: 'debug',
@@ -71,14 +70,10 @@ casper.then(function(){
 					});
 					this.then(function(){
 						var pgtitle = this.getTitle();
-						this.page.switchToFrame("iframe");
-						this.waitWhileVisible('iframe', function () {
-							var time = (new Date().getTime() - timeIni) / 1000;
-							this.capture('screenshots/'+cmps[x-1]+'-'+i+'.png');   
-							tableContent(i,pgtitle,time,cmps[x-1]+'-'+i);			
-							tr.appendChild(htmlContent);
-					      }, function () {
-					      }, 55000);
+						var time = (new Date().getTime() - timeIni) / 1000;
+						this.capture('screenshots/'+cmps[x-1]+'-'+i+'.png');   
+						tableContent(i,pgtitle,time,cmps[x-1]+'-'+i);			
+						tr.appendChild(htmlContent);
 					});
 					this.then(function(){
 						casper.page.switchToMainFrame();
@@ -100,9 +95,6 @@ casper.then(function(){
 		
 	});
 });
-
-
-
 
 
 casper.run(function() { 

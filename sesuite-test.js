@@ -69,10 +69,10 @@ casper.then(function(){
 						timeIni = new Date().getTime(); //Tempo inicial = antes de clicar
 						this.click('a[data-oid="'+links[i]+'"]');
 					});
-					this.then(function(){
+					this.then(function(){debugger;
 						var pgtitle = this.getTitle();
-						this.page.switchToFrame("iframe");
-						this.waitWhileVisible('iframe', function () {
+						//this.page.switchToFrame("iframe");
+						this.waitWhileVisible('iframe', function () {debugger;
 							var time = (new Date().getTime() - timeIni) / 1000;
 							this.capture('screenshots/'+cmps[x-1]+'-'+i+'.png');   
 							tableContent(i,pgtitle,time,cmps[x-1]+'-'+i);			
