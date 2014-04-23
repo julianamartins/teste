@@ -41,8 +41,8 @@ casper.then(function(){
 	    return this.exists('a[class="products-product-73"]');
 	}, function then() {
 		var cmps = getCmps();
-		var x=1;
-		this.repeat(cmps.length, function() {debugger;
+		var x=0;
+		this.repeat(cmps.length, function() {
 			this.click('a[class="'+cmps[x]+'"]');
 			this.then(function(){
 				var links = getPageLinks();

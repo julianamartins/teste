@@ -1,4 +1,3 @@
-
 var casper = require('casper').create({
     verbose: true,
     logLevel: 'debug',
@@ -18,7 +17,6 @@ var utils = require("utils");
 var timesRequest = [];
 var timeIni = "";
 var x = require('casper').selectXPath;
-var links = [];
 var fs = require('fs');
 var htmlBase = "";
 var htmlContent = "";
@@ -69,19 +67,21 @@ casper.then(function(){
 						timeIni = new Date().getTime(); //Tempo inicial = antes de clicar
 						this.click('a[data-oid="'+links[i]+'"]');
 					});
-					this.then(function(){debugger;
-						var pgtitle = this.getTitle();
-						//this.page.switchToFrame("iframe");
-						this.waitWhileVisible('iframe', function () {debugger;
+					this.then(function(){
+						casper.waitFor(function check() {
+						    return this.evaluate(function() {
+						        return document.getElementById("iframe").contentDocument.readyState == "complete";
+						    });
+						},
+						function then() {
+							var pgtitle = this.getTitle();
 							var time = (new Date().getTime() - timeIni) / 1000;
 							this.capture('screenshots/'+cmps[x-1]+'-'+i+'.png');   
 							tableContent(i,pgtitle,time,cmps[x-1]+'-'+i);			
 							tr.appendChild(htmlContent);
-					      }, function () {
-					      }, 55000);
+						});
 					});
 					this.then(function(){
-						casper.page.switchToMainFrame();
 						if(i < (links.length-1)){
 							if(!this.exists('a[data-oid="'+links[i+1]+'"]'))
 					    		this.click('a[class="'+cmps[x-1]+'"]');
@@ -100,9 +100,6 @@ casper.then(function(){
 		
 	});
 });
-
-
-
 
 
 casper.run(function() { 
@@ -139,7 +136,7 @@ function getPageLinks(){
 		var query = document.querySelectorAll(".section-container > .screen-list > li > [data-oid]");
         var links = [];
         for( var i = 0; i < query.length; i++ ) {
-			if(query[i].getAttribute('data-oid') != "undefined")
+			if(query[i].getAttribute('data-oid') != "undefined" && links.indexOf(query[i].getAttribute('data-oid')) == -1)
 	            links.push(query[i].getAttribute('data-oid'));
 	    }
         return links;
