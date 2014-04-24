@@ -71,37 +71,6 @@ function betterTypeOf(input) {
 exports.betterTypeOf = betterTypeOf;
 
 /**
- * Provides a better instanceof operator, capable of checking against the full object prototype hierarchy.
- *
- * @param  mixed  input
- * @param  function constructor
- * @return String
- * @see    https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Details_of_the_Object_Model
- */
-function betterInstanceOf(input, constructor) {
-    "use strict";
-    /*jshint eqnull:true, eqeqeq:false */
-    if (typeof input == 'undefined' || input == null) {
-      return false;
-    }
-    var inputToTest = input;
-    while (inputToTest != null) {
-      if (inputToTest == constructor.prototype) {
-        return true;
-      }
-      if (typeof inputToTest == 'xml') {
-        return constructor.prototype == document.prototype;
-      }
-      if (typeof inputToTest == 'undefined') {
-        return false;
-      }
-      inputToTest = inputToTest.__proto__;
-    }
-    return equals(input.constructor.name, constructor.name);
-}
-exports.betterInstanceOf = betterInstanceOf;
-
-/**
  * Cleans a passed URL.
  *
  * @param  String  url An HTTP URL
@@ -153,22 +122,6 @@ function computeModifier(modifierString, modifiers) {
     }, modifier);
 }
 exports.computeModifier = computeModifier;
-
-/**
- * Decodes a URL.
- * @param  String  url
- * @return String
- */
-function decodeUrl(url) {
-    "use strict";
-    try {
-        return decodeURIComponent(url);
-    } catch (e) {
-        /*global unescape*/
-        return unescape(url);
-    }
-}
-exports.decodeUrl = decodeUrl;
 
 /**
  * Dumps a JSON representation of passed value to the console. Used for
@@ -626,26 +579,14 @@ function isPlainObject(obj) {
     return (type === 'object');
 }
 
-/**
- * Object recursive merging utility for use in the SlimerJS environment
- *
- * @param  Object  origin  the origin object
- * @param  Object  add     the object to merge data into origin
- * @param  Object  opts    optional options to be passed in
- * @return Object
- */
-function mergeObjectsInSlimerjs(origin, add, opts) {
+function mergeObjectsInSlimerjs(origin, add) {
     "use strict";
-
-    var options = opts || {},
-        keepReferences = options.keepReferences;
-
     for (var p in add) {
         if (isPlainObject(add[p])) {
             if (isPlainObject(origin[p])) {
                 origin[p] = mergeObjects(origin[p], add[p]);
             } else {
-                origin[p] = keepReferences ? add[p] : clone(add[p]);
+                origin[p] = clone(add[p]);
             }
         } else {
             origin[p] = add[p];
@@ -659,14 +600,10 @@ function mergeObjectsInSlimerjs(origin, add, opts) {
  *
  * @param  Object  origin  the origin object
  * @param  Object  add     the object to merge data into origin
- * @param  Object  opts    optional options to be passed in
  * @return Object
  */
-function mergeObjects(origin, add, opts) {
+function mergeObjects(origin, add) {
     "use strict";
-
-    var options = opts || {},
-        keepReferences = options.keepReferences;
 
     if (phantom.casperEngine === 'slimerjs') {
         // Because of an issue in the module system of slimerjs (security membranes?)
@@ -674,13 +611,12 @@ function mergeObjects(origin, add, opts) {
         // let's use an other algorithm
         return mergeObjectsInSlimerjs(origin, add);
     }
-
     for (var p in add) {
         if (add[p] && add[p].constructor === Object) {
             if (origin[p] && origin[p].constructor === Object) {
                 origin[p] = mergeObjects(origin[p], add[p]);
             } else {
-                origin[p] = keepReferences ? add[p] : clone(add[p]);
+                origin[p] = clone(add[p]);
             }
         } else {
             origin[p] = add[p];

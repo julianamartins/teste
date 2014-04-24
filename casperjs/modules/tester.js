@@ -164,6 +164,15 @@ var Tester = function Tester(casper, options) {
         }
     });
 
+    // casper events
+    this.casper.on('error', function onCasperError(msg, backtrace) {
+        self.processPhantomError(msg, backtrace);
+    });
+
+    this.casper.on('waitFor.timeout', function onWaitForTimeout(timeout) {
+        this.warn(f('wait timeout of %dms reached', timeout));
+    });
+
     function errorHandler(error, backtrace) {
         self.casper.unwait();
         if (error instanceof Error) {
@@ -181,16 +190,11 @@ var Tester = function Tester(casper, options) {
         } catch (e) {}
         self.uncaughtError(error, self.currentTestFile, line, backtrace);
     }
-
+    
     function errorHandlerAndDone(error, backtrace) {
         errorHandler(error, backtrace);
         self.done();
     }
-
-    // casper events
-    this.casper.on('error', function onCasperError(msg, backtrace) {
-        self.processPhantomError(msg, backtrace);
-    });
 
     [
         'wait.error',
@@ -223,34 +227,8 @@ var Tester = function Tester(casper, options) {
         throw new TimedOutError(f("Timeout occured (%dms)", timeout));
     };
 
-    this.casper.options.onWaitTimeout = function test_onWaitTimeout(timeout, details) {
-        /*jshint maxcomplexity:10*/
-        var message = f("Wait timeout occured (%dms)", timeout);
-        details = details || {};
-
-        if (details.selector) {
-            message = f(details.waitWhile ? '"%s" never went away in %dms' : '"%s" still did not exist in %dms', details.selector, timeout);
-        }
-        else if (details.visible) {
-            message = f(details.waitWhile ? '"%s" never disappeared in %dms' : '"%s" never appeared in %dms', details.visible, timeout);
-        }
-        else if (details.url || details.resource) {
-            message = f('%s did not load in %dms', details.url || details.resource, timeout);
-        }
-        else if (details.popup) {
-            message = f('%s did not pop up in %dms', details.popup, timeout);
-        }
-        else if (details.text) {
-            message = f('"%s" did not appear in the page in %dms', details.text, timeout);
-        }
-        else if (details.selectorTextChange) {
-            message = f('"%s" did not have a text change in %dms', details.selectorTextChange, timeout);
-        }
-        else if (utils.isFunction(details.testFx)) {
-            message = f('"%s" did not evaluate to something truthy in %dms', details.testFx.toString(), timeout);
-        }
-
-        errorHandlerAndDone(new TimedOutError(message));
+    this.casper.options.onWaitTimeout = function test_onWaitTimeout(timeout) {
+        throw new TimedOutError(f("Wait timeout occured (%dms)", timeout));
     };
 };
 
@@ -449,21 +427,6 @@ Tester.prototype.assertEvalEqual = function assertEvalEquals(fn, expected, messa
     });
 };
 
-function baseFieldAssert(inputName, expected, actual, message) {
-    /*jshint validthis:true */
-    "use strict";
-
-    return this.assert(utils.equals(actual, expected),  message, {
-        type: 'assertField',
-        standard: f('"%s" input field has the value "%s"', inputName, expected),
-        values: {
-            inputName: inputName,
-            actual: actual,
-            expected: expected
-         }
-    });
-}
-
 /**
  * Asserts that the provided assertion fails (used for internal testing).
  *
@@ -488,67 +451,26 @@ Tester.prototype.assertFail = function assertFail(fn, message) {
 /**
  * Asserts that a given input field has the provided value.
  *
- * @param  String|Object   input      The name attribute of the input element
- *                                    or an object with the selector
- * @param  String          expected   The expected value of the input element
- * @param  String          message    Test description
- * @param  Object          options    ClientUtils#getFieldValue options (optional)
- * @return Object                     An assertion result object
+ * @param  String   inputName  The name attribute of the input element
+ * @param  String   expected   The expected value of the input element
+ * @param  String   message    Test description
+ * @param  Object   options    ClientUtils#getFieldValue options (optional)
+ * @return Object              An assertion result object
  */
-Tester.prototype.assertField = function assertField(input, expected, message, options) {
+Tester.prototype.assertField = function assertField(inputName, expected,  message, options) {
     "use strict";
-
-    if (typeof input === 'object') {
-        switch (input.type) {
-            case 'css':
-                return this.assertFieldCSS(input.path, expected, message);
-            case 'xpath':
-                return this.assertFieldXPath(input.path, expected, message);
-            default:
-                throw new CasperError('Invalid regexp.');
-            // no default
-        }
-    }
-
     var actual = this.casper.evaluate(function(inputName, options) {
         return __utils__.getFieldValue(inputName, options);
-    }, input, options);
-
-    return baseFieldAssert.call(this, input, expected, actual, message);
-};
-
-/**
- * Asserts that a given input field by CSS selector has the provided value.
- *
- * @param  Object   cssSelector The CSS selector to use for the assert field value
- * @param  String   expected    The expected value of the input element
- * @param  String   message     Test description
- * @return Object               An assertion result object
- */
-Tester.prototype.assertFieldCSS = function assertFieldCSS(cssSelector, expected, message) {
-    "use strict";
-    var actual = this.casper.evaluate(function(inputName, cssSelector) {
-        return __utils__.getFieldValue(inputName, {inputSelector: cssSelector});
-    }, null, cssSelector);
-
-    return baseFieldAssert.call(this, null, expected, actual, message);
-};
-
-/**
- * Asserts that a given input field by XPath selector has the provided value.
- *
- * @param  Object   xPathSelector The XPath selector to use for the assert field value
- * @param  String   expected      The expected value of the input element
- * @param  String   message       Test description
- * @return Object                 An assertion result object
- */
-Tester.prototype.assertFieldXPath = function assertFieldXPath(xPathSelector, expected, message) {
-    "use strict";
-    var actual = this.casper.evaluate(function(inputName, xPathSelector) {
-        return __utils__.getFieldValue(inputName, {inputXPath: xPathSelector});
-    }, null, xPathSelector);
-
-    return baseFieldAssert.call(this, null, expected, actual, message);
+    }, inputName, options);
+    return this.assert(utils.equals(actual, expected),  message, {
+        type: 'assertField',
+        standard: f('"%s" input field has the value "%s"', inputName, expected),
+        values: {
+            inputName: inputName,
+            actual: actual,
+            expected: expected
+         }
+    });
 };
 
 /**
@@ -566,7 +488,7 @@ Tester.prototype.assertSelectorExist = function assertExists(selector, message) 
     "use strict";
     return this.assert(this.casper.exists(selector), message, {
         type: "assertExists",
-        standard: f("Find an element matching: %s", selector),
+        standard: f("Found an element matching: %s", selector),
         values: {
             selector: selector
         }
@@ -586,7 +508,7 @@ Tester.prototype.assertNotExists = function assertDoesntExist(selector, message)
     "use strict";
     return this.assert(!this.casper.exists(selector), message, {
         type: "assertDoesntExist",
-        standard: f("Fail to find element matching selector: %s", selector),
+        standard: f("No element found matching selector: %s", selector),
         values: {
             selector: selector
         }
@@ -716,7 +638,7 @@ Tester.prototype.assertResourceExist = function assertResourceExists(test, messa
     "use strict";
     return this.assert(this.casper.resourceExists(test), message, {
         type: "assertResourceExists",
-        standard: "Confirm page has resource",
+        standard: "Expected resource has been found",
         values: {
             test: test
         }
@@ -760,7 +682,7 @@ Tester.prototype.assertTextExist = function assertTextExists(text, message) {
     }).indexOf(text) !== -1);
     return this.assert(textFound, message, {
         type: "assertTextExists",
-        standard: "Find text within the document body",
+        standard: "Found expected text within the document body",
         values: {
             text: text
         }
@@ -820,7 +742,7 @@ Tester.prototype.assertSelectorContains = function assertSelectorHasText(selecto
     var textFound = got.indexOf(text) !== -1;
     return this.assert(textFound, message, {
         type: "assertSelectorHasText",
-        standard: f('Find "%s" within the selector "%s"', text, selector),
+        standard: f('Found "%s" within the selector "%s"', text, selector),
         values: {
             selector: selector,
             text: text,
@@ -913,29 +835,6 @@ Tester.prototype.assertType = function assertType(subject, type, message) {
             subject: subject,
             type: type,
             actual: actual
-        }
-    });
-};
-
-/**
- * Asserts that the provided subject has the provided constructor in its prototype hierarchy.
- *
- * @param  mixed   subject       The value to test
- * @param  Function constructor  The javascript type name
- * @param  String  message       Test description
- * @return Object                An assertion result object
- */
-Tester.prototype.assertInstanceOf = function assertInstanceOf(subject, constructor, message) {
-    "use strict";
-    if (utils.betterTypeOf(constructor) !== "function") {
-        throw new CasperError('Subject is null or undefined.');
-    }
-    return this.assert(utils.betterInstanceOf(subject, constructor), message, {
-        type: "assertInstanceOf",
-        standard: f('Subject is instance of: "%s"', constructor.name),
-        values: {
-            subject: subject,
-            constructorName: constructor.name
         }
     });
 };
@@ -1436,7 +1335,7 @@ Tester.prototype.processError = function processError(error) {
 Tester.prototype.processPhantomError = function processPhantomError(msg, backtrace) {
     "use strict";
     if (/^AssertionError/.test(msg)) {
-        this.casper.warn('looks like you did not use begin(), which is mandatory since 1.1');
+        this.casper.warn('looks you did not use begin() which is mandatory since 1.1');
     }
     var termination = /^TerminationError:?\s?(.*)/.exec(msg);
     if (termination) {
@@ -1482,13 +1381,11 @@ Tester.prototype.renderFailureDetails = function renderFailureDetails() {
 /**
  * Render tests results, an optionally exit phantomjs.
  *
- * @param  Boolean  exit    Exit casper after results have been rendered?
- * @param  Number   status  Exit status code (default: 0)
- * @param  String   save    Optional path to file where to save the results log
+ * @param  Boolean  exit
  */
 Tester.prototype.renderResults = function renderResults(exit, status, save) {
     "use strict";
-    /*jshint maxstatements:25*/
+    /*jshint maxstatements:20*/
     save = save || this.options.save;
     var exitStatus = 0,
         failed = this.suiteResults.countFailed(),
@@ -1526,7 +1423,6 @@ Tester.prototype.renderResults = function renderResults(exit, status, save) {
         this.saveResults(save);
     }
     if (exit === true) {
-        this.emit("exit");
         this.casper.exit(status ? ~~status : exitStatus);
     }
 };

@@ -83,8 +83,7 @@ function XUnitExporter() {
     this.results = undefined;
     this._xml = utils.node('testsuites');
     this._xml.toString = function toString() {
-        var serializer = new XMLSerializer();
-        return '<?xml version="1.0" encoding="UTF-8"?>' + serializer.serializeToString(this);
+        return '<?xml version="1.0" encoding="UTF-8"?>' + this.outerHTML; // ouch
     };
 }
 exports.XUnitExporter = XUnitExporter;
@@ -153,7 +152,7 @@ XUnitExporter.prototype.getXML = function getXML() {
         suiteNode.appendChild(warningNode);
         this._xml.appendChild(suiteNode);
     }.bind(this));
-    this._xml.setAttribute('time', utils.ms2seconds(this.results.calculateDuration()));
+    this._xml.setAttribute('duration', utils.ms2seconds(this.results.calculateDuration()));
     return this._xml;
 };
 
