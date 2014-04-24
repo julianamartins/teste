@@ -15,21 +15,6 @@ phantomcss.init({
     }
 });
 
-var casper = require('casper').create({
-    verbose: true,
-    logLevel: 'warn',
-        pageSettings: {
-         loadImages:  true,         // The WebPage instance used by Casper will
-         loadPlugins: true,         // use these settings
-         userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.94 Safari/537.4',
-    	XSSAuditingEnabled: true,
-    },
-    viewportSize: {
-        width: 1366,
-        height: 768
-    },
-    waitTimeout: 500000
-});
 var utils = require("utils");
 var timesRequest = [];
 var timeIni = "";
@@ -38,96 +23,105 @@ var fs = require('fs');
 var htmlBase = "";
 var htmlContent = "";
 
-casper.start('http://sesuite20.softexpert.com/softexpert/login', function() {
 
-	this.fillSelectors('form.login-form', {
-		'input[id="user"]':    'juliana.martins',
-		'input[id="password"]':    'n1k1@2012'
-    }, true);
+casper.test.begin('Test SE Suite', 2, function suite(test) {
+	casper.start('http://sesuite20.softexpert.com/softexpert/login', function() {
 
-   	this.click('button[class="btn btn-cancel loginbtn"]');
+		this.fillSelectors('form.login-form', {
+			'input[id="user"]':    'juliana.martins',
+			'input[id="password"]':    'n1k1@2012'
+	    }, true);
 
-});
+	   	this.click('button[class="btn btn-cancel loginbtn"]');
 
-casper.then(function(){
-   	this.wait(7000, function() {});
-});
-
-casper.then(function(){
-   	this.waitFor(function check() {
-	    return this.exists('a[class="products-product-73"]');
-	}, function then() {
-		var cmps = getCmps();
-		var x=0;
-		this.repeat(cmps.length, function() {
-			this.click('a[class="'+cmps[x]+'"]');
-			this.then(function(){
-				var links = getPageLinks();
-				htmlBase = document.createElement('html');
-   				html = fs.read('tmpl/base.html');
-   				htmlBase.innerHTML = html;
-				var table = htmlBase.querySelector(".tableContainer");
-				var i = -1;
-				var countTr = 0;
-				var tr = document.createElement('tr');
-
-				this.repeat(links.length, function() {
-					if((countTr%2 == 0) && countTr != 0){
-						table.appendChild(tr);
-						tr = document.createElement('tr');
-					}
-					countTr +=1;
-					
-					this.then(function(){
-						this.wait(1000, function() {});
-						timesRequest = []; //Limpa array com requests
-						timeIni = new Date().getTime(); //Tempo inicial = antes de clicar
-						this.click('a[data-oid="'+links[i]+'"]');
-					});
-					this.then(function(){
-						casper.waitFor(function check() {
-						    return this.evaluate(function() {
-						        return document.getElementById("iframe").contentDocument.readyState == "complete";
-						    });
-						},
-						function then() {
-							var pgtitle = this.getTitle();
-							var time = (new Date().getTime() - timeIni) / 1000;
-							//this.capture('screenshots/'+cmps[x-1]+'-'+i+'.png'); 
-							phantomcss.screenshot('.se-body', cmps[x-1]+'-'+i);  
-							tableContent(i,pgtitle,time,cmps[x-1]+'-'+i);			
-							tr.appendChild(htmlContent);
-						});
-					});
-					this.then(function(){
-						if(i < (links.length-1)){
-							if(!this.exists('a[data-oid="'+links[i+1]+'"]'))
-					    		this.click('a[class="'+cmps[x-1]+'"]');
-						}
-					    else{
-					    	table.appendChild(tr);
-					    	fs.write('pages/'+cmps[x-1]+'.html', "'"+htmlBase.innerHTML+"'","w");
-					    }
-					});
-					i++;
-				});
-
-			});
-			x++;
-		});
-		
 	});
-});
 
-casper.then(function() { 
-	this.click('a[class="logout-btn"]');
-	phantomcss.compareAll();
-});
 
-casper.run(function() { 
-	this.exit();
-	casper.test.renderResults(true, 0, 'log1.xml');
-}); 
+	casper.options.waitTimeout = 500000;
+	casper.viewport(1366,768);
+
+	casper.then(function(){
+	   	this.wait(7000, function() {});
+	});
+
+	casper.then(function(){
+	   	this.waitFor(function check() {
+		    return this.exists('a[class="products-product-73"]');
+		}, function then() {
+			var cmps = getCmps();
+			var x=0;
+			this.repeat(cmps.length, function() {
+				this.click('a[class="'+cmps[x]+'"]');
+				this.then(function(){
+					var links = getPageLinks();
+					htmlBase = document.createElement('html');
+	   				html = fs.read('tmpl/base.html');
+	   				htmlBase.innerHTML = html;
+					var table = htmlBase.querySelector(".tableContainer");
+					var i = -1;
+					var countTr = 0;
+					var tr = document.createElement('tr');
+
+					this.repeat(links.length, function() {
+						if((countTr%2 == 0) && countTr != 0){
+							table.appendChild(tr);
+							tr = document.createElement('tr');
+						}
+						countTr +=1;
+						
+						this.then(function(){
+							this.wait(1000, function() {});
+							timesRequest = []; //Limpa array com requests
+							timeIni = new Date().getTime(); //Tempo inicial = antes de clicar
+							this.click('a[data-oid="'+links[i]+'"]');
+						});
+						this.then(function(){
+							casper.waitFor(function check() {
+							    return this.evaluate(function() {
+							        return document.getElementById("iframe").contentDocument.readyState == "complete";
+							    });
+							},
+							function then() {
+								var time = (new Date().getTime() - timeIni) / 1000;
+								var pgtitle = this.getTitle();
+								test.assertEquals(true, time < 3);
+								//this.capture('screenshots/'+cmps[x-1]+'-'+i+'.png'); 
+								phantomcss.screenshot('.se-body', cmps[x-1]+'-'+i);  
+								tableContent(i,pgtitle,time,cmps[x-1]+'-'+i);			
+								tr.appendChild(htmlContent);
+							});
+						});
+						this.then(function(){
+							if(i < (links.length-1)){
+								if(!this.exists('a[data-oid="'+links[i+1]+'"]'))
+						    		this.click('a[class="'+cmps[x-1]+'"]');
+							}
+						    else{
+						    	table.appendChild(tr);
+						    	fs.write('pages/'+cmps[x-1]+'.html', "'"+htmlBase.innerHTML+"'","w");
+						    }
+						});
+						i++;
+					});
+
+				});
+				x++;
+			});
+			
+		});
+	});
+
+	casper.then(function() { 
+		this.click('a[id="logout-btn"]');
+		phantomcss.compareAll();
+	});
+
+	casper.run(function() { 
+		test.done();
+		casper.test.renderResults(true, 0, 'log-sesuite.xml');
+	}); 
+
+});
 
 casper.on('resource.requested', function(resource) {
     timesRequest[resource.id] = {
